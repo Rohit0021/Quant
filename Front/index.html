@@ -1,15 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
   <title> Quant | Frontend </title>
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
-  <p> charts here </p>
+  
+  <main>
+    <section id="score"></section>
+    
+    <section id="stats">
+      <div id="stats-box" class="grid grid-cols-3"></div>
+    </section>
+    
+    <section id="curve">
+      <div id="chart-box" class="border border-1 border-blue-300"></div>
+    </section>
+    
+    <section id="month"></section>
+  </main>
+  
+  <script src="main.js"></script>
 </body>
+
 </html>
-
-
-

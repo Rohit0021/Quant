@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Equity & Drawdown</title>
+
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+</head>
+
+<body>
+
+<div id="container" style="height: 600px; min-width: 310px"></div>
+
+<script>
+const equity = [
+  [Date.UTC(2026, 0, 1), 10000],
+  [Date.UTC(2026, 0, 2), 10150],
+  [Date.UTC(2026, 0, 3), 10080],
+  [Date.UTC(2026, 0, 4), 10300],
+  [Date.UTC(2026, 0, 5), 10200],
+  [Date.UTC(2026, 0, 6), 10500],
+  [Date.UTC(2026, 0, 7), 10400],
+  [Date.UTC(2026, 0, 8), 10800],
+  [Date.UTC(2026, 0, 9), 10600],
+  [Date.UTC(2026, 0, 10), 11000]
+];
+
+const drawdown = [
+  [Date.UTC(2026, 0, 1), 0],
+  [Date.UTC(2026, 0, 2), 0],
+  [Date.UTC(2026, 0, 3), -70],
+  [Date.UTC(2026, 0, 4), 0],
+  [Date.UTC(2026, 0, 5), -100],
+  [Date.UTC(2026, 0, 6), 0],
+  [Date.UTC(2026, 0, 7), -100],
+  [Date.UTC(2026, 0, 8), 0],
+  [Date.UTC(2026, 0, 9), -200],
+  [Date.UTC(2026, 0, 10), 0]
+];
+
+Highcharts.stockChart('container', {
+
+  rangeSelector: {
+    enabled: false
+  },
+
+  navigator: {
+    enabled: true
+  },
+
+  scrollbar: {
+    enabled: true
+  },
+
+  xAxis: {
+    type: 'datetime'
+  },
+
+  yAxis: [
+    {
+      title: {
+        text: 'Equity'
+      },
+
+      height: '65%',
+      opposite: false
+    },
+    {
+      title: {
+        text: 'Drawdown'
+      },
+
+      top: '70%',
+      height: '30%',
+      offset: 0,
+      opposite: false
+    }
+  ],
+
+  tooltip: {
+    shared: true,
+    valueDecimals: 2
+  },
+
+  series: [
+    {
+      name: 'Equity',
+      type: 'line',
+      data: equity,
+      yAxis: 0
+    },
+    {
+      name: 'Drawdown',
+      type: 'line',
+      data: drawdown,
+      yAxis: 1
+    }
+  ]
+});
+</script>
+
+</body>
+</html>

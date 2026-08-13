@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategy Lab · Backtest Readout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #0B0D12;
+      --surface: #151821;
+      --surface-alt: #1B1F2A;
+      --line: #262B37;
+      --line-soft: #1E222C;
+      --ink: #ECE8E0;
+      --ink-dim: #9096A3;
+      --ink-faint: #585F6E;
+      --brass: #CBA135;
+      --brass-soft: #8A7226;
+      --profit: #5FB489;
+      --profit-deep: #2F5C43;
+      --loss: #C1584B;
+      --loss-deep: #5C2C27;
+    }
+    
+    html,
+    body {
+      background: var(--canvas);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+    }
+    
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+    .font-mono {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: .14em;
+      font-size: .68rem;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    
+    .hairline {
+      background: var(--line);
+    }
+    
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+    
+    .glow-text {
+      text-shadow: 0 0 24px rgba(203, 161, 53, 0.35);
+    }
+    
+    ::selection {
+      background: var(--brass);
+      color: #12140C;
+    }
+    
+    ::-webkit-scrollbar {
+      height: 8px;
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    @media (prefers-reduced-motion: no-preference) {
+      .sparkline-path {
+        stroke-dasharray: 900;
+        stroke-dashoffset: 900;
+        animation: draw 1.6s ease-out forwards;
+      }
+      
+      @keyframes draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      
+      .fade-up {
+        opacity: 0;
+        transform: translateY(6px);
+        animation: fadeUp .5s ease-out forwards;
+      }
+    }
+    
+    .fade-up:nth-of-type(1) {
+      animation-delay: .02s
+    }
+    
+    .fade-up:nth-of-type(2) {
+      animation-delay: .08s
+    }
+    
+    .fade-up:nth-of-type(3) {
+      animation-delay: .14s
+    }
+    
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .cell-tip {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .12s ease;
+    }
+    
+    .cell-wrap:hover .cell-tip {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    :focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  
+  <div class="max-w-5xl mx-auto px-5 sm:px-8 py-10">
+    
+    <!-- Header -->
+    <header class="flex items-end justify-between border-b border-[var(--line)] pb-5 mb-10">
+      <div>
+        <p class="eyebrow mb-2">STRATEGY LAB · BACKTEST READOUT</p>
+        <h1 class="font-display text-2xl sm:text-3xl font-600 tracking-tight">Meridian Breakout v4</h1>
+        <p class="text-sm text-[var(--ink-dim)] mt-1">ES · 15m · Jan 2024 – Jun 2026</p>
+      </div>
+      <div class="hidden sm:flex items-center gap-2 border border-[var(--line)] rounded-full px-3 py-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-[var(--profit)]"></span>
+        <span class="font-mono text-xs text-[var(--ink-dim)]">RUN #17 COMPLETE</span>
+      </div>
+    </header>
+    
+    <main class="space-y-14">
+      
+      <!-- SCORE -->
+      <section id="score">
+        <p class="eyebrow mb-3">Composite Score</p>
+        <div class="grid grid-cols-2 gap-px hairline rounded-lg overflow-hidden">
+          <div class="card !border-0 px-5 sm:px-7 py-6">
+            <p class="text-xs text-[var(--ink-dim)] mb-3">Current Strategy</p>
+            <div class="flex items-baseline gap-2">
+              <span class="font-mono text-4xl sm:text-5xl font-500 text-[var(--ink)]">87.4</span>
+              <span class="font-mono text-sm text-[var(--ink-faint)]">/100</span>
+            </div>
+            <p class="font-mono text-xs text-[var(--profit)] mt-3">▲ 2.1 vs previous run</p>
+          </div>
+          <div class="card !border-0 px-5 sm:px-7 py-6 relative">
+            <p class="text-xs text-[var(--ink-dim)] mb-3 flex items-center gap-1.5">
+              Best Recorded
+              <span class="text-[var(--brass)] text-[10px]">★</span>
+            </p>
+            <div class="flex items-baseline gap-2">
+              <span class="font-mono text-4xl sm:text-5xl font-500 text-[var(--brass)] glow-text">94.2</span>
+              <span class="font-mono text-sm text-[var(--ink-faint)]">/100</span>
+            </div>
+            <p class="font-mono text-xs text-[var(--ink-faint)] mt-3">Run #11 · Mar 14, 2026</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- STATS -->
+      <section id="stats">
+        <p class="eyebrow mb-3">Performance Metrics</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-px hairline rounded-lg overflow-hidden">
+          
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Win Rate</p>
+            <p class="font-mono text-xl text-[var(--ink)]">58.3<span class="text-[var(--ink-faint)] text-sm">%</span></p>
+          </div>
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Profit Factor</p>
+            <p class="font-mono text-xl text-[var(--ink)]">1.84</p>
+          </div>
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Sharpe Ratio</p>
+            <p class="font-mono text-xl text-[var(--ink)]">1.62</p>
+          </div>
+          
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Max Drawdown</p>
+            <p class="font-mono text-xl text-[var(--loss)]">-8.46<span class="text-[var(--ink-faint)] text-sm">%</span></p>
+          </div>
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Avg Win / Loss</p>
+            <p class="font-mono text-xl text-[var(--ink)]">1.44<span class="text-[var(--ink-faint)] text-sm">R</span></p>
+          </div>
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Expectancy</p>
+            <p class="font-mono text-xl text-[var(--profit)]">+0.31<span class="text-[var(--ink-faint)] text-sm">R</span></p>
+          </div>
+          
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Total Trades</p>
+            <p class="font-mono text-xl text-[var(--ink)]">412</p>
+          </div>
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">Avg Hold Time</p>
+            <p class="font-mono text-xl text-[var(--ink)]">3.2<span class="text-[var(--ink-faint)] text-sm">h</span></p>
+          </div>
+          <div class="card !border-0 px-5 py-5">
+            <p class="text-xs text-[var(--ink-dim)] mb-2">CAGR</p>
+            <p class="font-mono text-xl text-[var(--profit)]">+28.7<span class="text-[var(--ink-faint)] text-sm">%</span></p>
+          </div>
+          
+        </div>
+      </section>
+      
+      <!-- CURVE -->
+      <section id="curve">
+        <div class="flex items-baseline justify-between mb-3">
+          <p class="eyebrow">Equity &amp; Drawdown</p>
+          <p class="font-mono text-[11px] text-[var(--ink-faint)]">30 MONTH WINDOW</p>
+        </div>
+        
+        <div class="card rounded-lg px-4 sm:px-6 py-6">
+          <div class="flex items-center gap-4 mb-4">
+            <span class="flex items-center gap-1.5 font-mono text-[11px] text-[var(--ink-dim)]">
+              <span class="w-2.5 h-[2px] bg-[var(--brass)] inline-block"></span> Equity
+            </span>
+            <span class="flex items-center gap-1.5 font-mono text-[11px] text-[var(--ink-dim)]">
+              <span class="w-2.5 h-2.5 bg-[var(--loss-deep)] inline-block"></span> Drawdown
+            </span>
+          </div>
+          <svg id="equity-chart" viewBox="0 0 600 130" class="w-full" preserveAspectRatio="none"></svg>
+          <div class="h-px bg-[var(--line)] my-1"></div>
+          <svg id="dd-chart" viewBox="0 0 600 50" class="w-full" preserveAspectRatio="none"></svg>
+          <div class="flex justify-between mt-2">
+            <span class="font-mono text-[10px] text-[var(--ink-faint)]">JAN '24</span>
+            <span class="font-mono text-[10px] text-[var(--ink-faint)]">JUN '25</span>
+            <span class="font-mono text-[10px] text-[var(--ink-faint)]">JUN '26</span>
+          </div>
+        </div>
+      </section>
+      
+      <!-- MONTH -->
+      <section id="month" class="pb-4">
+        <div class="flex items-baseline justify-between mb-3">
+          <p class="eyebrow">Monthly Returns</p>
+          <div class="flex items-center gap-2 font-mono text-[10px] text-[var(--ink-faint)]">
+            <span>-8%</span>
+            <span class="inline-flex h-2 w-16 rounded-sm overflow-hidden" style="background:linear-gradient(90deg,var(--loss-deep),#20222A,var(--profit-deep))"></span>
+            <span>+8%</span>
+          </div>
+        </div>
+        <div class="card rounded-lg px-4 sm:px-6 py-6 overflow-x-auto">
+          <div id="month-grid" class="min-w-[560px] font-mono text-xs"></div>
+        </div>
+      </section>
+      
+    </main>
+    
+    <footer class="mt-14 pt-5 border-t border-[var(--line)] flex justify-between font-mono text-[10px] text-[var(--ink-faint)]">
+      <span>MERIDIAN BREAKOUT v4</span>
+      <span>GENERATED · AUG 13 2026</span>
+    </footer>
+  </div>
+  
+  <script>
+    // ---------- Equity / Drawdown chart ----------
+    const equity = [100, 104, 109, 106, 112, 118, 115, 121, 127, 124, 130, 126, 119, 123, 131, 138, 134, 141, 148, 144, 151, 158, 153, 147, 152, 159, 165, 161, 167, 172];
+    
+    let peak = equity[0];
+    const drawdown = equity.map(v => { peak = Math.max(peak, v); return -((peak - v) / peak * 100); });
+    
+    function buildPath(data, w, h, padTop, padBottom, invert = false) {
+      const min = Math.min(...data),
+        max = Math.max(...data);
+      const range = (max - min) || 1;
+      const usableH = h - padTop - padBottom;
+      return data.map((v, i) => {
+        const x = (i / (data.length - 1)) * w;
+        let norm = (v - min) / range;
+        if (invert) norm = 1 - norm;
+        const y = invert ? padTop + norm * usableH : (h - padBottom) - norm * usableH;
+        return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+    }
+    
+    // Equity chart
+    const eqSvg = document.getElementById('equity-chart');
+    const eqLinePath = buildPath(equity, 600, 130, 10, 14);
+    const eqAreaPath = eqLinePath + ` L600,116 L0,116 Z`;
+    eqSvg.innerHTML = `
+  <defs>
+    <linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#CBA135" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#CBA135" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  ${[0,1,2,3].map(i=>`<line x1="0" x2="600" y1="${10+i*35}" y2="${10+i*35}" stroke="#1E222C" stroke-width="1"/>`).join('')}
+  <path d="${eqAreaPath}" fill="url(#eqFill)" stroke="none"/>
+  <path class="sparkline-path" d="${eqLinePath}" fill="none" stroke="#CBA135" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+`;
+    
+    // Drawdown chart (mirrored, baseline at top)
+    const ddSvg = document.getElementById('dd-chart');
+    const ddMin = Math.min(...drawdown);
+    const ddPath = drawdown.map((v, i) => {
+      const x = (i / (drawdown.length - 1)) * 600;
+      const y = 4 + (v / ddMin) * 40;
+      return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    const ddAreaPath = `M0,4 ` + drawdown.map((v, i) => {
+      const x = (i / (drawdown.length - 1)) * 600;
+      const y = 4 + (v / ddMin) * 40;
+      return `L${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ') + ` L600,4 Z`;
+    ddSvg.innerHTML = `
+  <line x1="0" x2="600" y1="4" y2="4" stroke="#262B37" stroke-width="1"/>
+  <path d="${ddAreaPath}" fill="#5C2C27" fill-opacity="0.55" stroke="none"/>
+  <path d="${ddPath}" fill="none" stroke="#C1584B" stroke-width="1.5"/>
+`;
+    
+    // ---------- Monthly heatmap ----------
+    const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+    const monthData = {
+      2024: [3.1, -1.2, 4.4, 2.0, -0.8, 1.6, 5.2, -2.1, 0.9, 3.8, -1.5, 2.7],
+      2025: [4.0, 1.1, -3.4, 2.9, 3.3, -0.6, 1.8, -4.2, 2.4, 5.1, 0.3, -1.8],
+      2026: [2.6, 3.9, -0.4, 1.2, 4.6, -2.9, null, null, null, null, null, null],
+    };
+    
+    function heatColor(v) {
+      if (v === null) return { bg: '#171A21', text: '#3A3F4C' };
+      const max = 6.5;
+      const t = Math.min(Math.abs(v) / max, 1);
+      const [r, g, b] = v >= 0 ?
+        [
+          [42, 58, 50],
+          [95, 180, 137]
+        ].reduce((acc, c, idx, arr) => idx === 0 ? c : c.map((ch, i) => Math.round(arr[0][i] + (arr[1][i] - arr[0][i]) * t))) :
+        [
+          [42, 42, 44],
+          [193, 88, 75]
+        ].reduce((acc, c, idx, arr) => idx === 0 ? c : c.map((ch, i) => Math.round(arr[0][i] + (arr[1][i] - arr[0][i]) * t)));
+      return { bg: `rgb(${r},${g},${b})`, text: t > 0.45 ? '#0B0D12' : (v >= 0 ? '#9FDABE' : '#E3A79E') };
+    }
+    
+    const grid = document.getElementById('month-grid');
+    let html = `<div class="grid" style="grid-template-columns:56px repeat(12,1fr); gap:4px;">`;
+    html += `<div></div>` + months.map(m => `<div class="text-center text-[var(--ink-faint)] pb-1">${m}</div>`).join('');
+    Object.entries(monthData).forEach(([year, vals]) => {
+      html += `<div class="flex items-center text-[var(--ink-dim)]">${year}</div>`;
+      vals.forEach(v => {
+        const { bg, text } = heatColor(v);
+        html += `<div class="cell-wrap relative">
+      <div class="aspect-square rounded-[4px] flex items-center justify-center" style="background:${bg}; color:${text}; font-size:10px;">
+        ${v===null ? '' : (v>0?'+':'') + v.toFixed(1)}
+      </div>
+    </div>`;
+      });
+    });
+    html += `</div>`;
+    grid.innerHTML = html;
+  </script>
+  
+</body>
+
+</html>
