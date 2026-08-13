@@ -10,10 +10,12 @@ console.log(!args.algo)
 
 switch (args) {
   case "backtest": {
+    console.log('case "backtest"')
     if (!args.algo /*|| !args.data || !args.out*/ ) {
+      console.log('if (!args.algo)')
       showUseExit();
     }
-    
+    console.log('case "backtest" after if')
     dotnetBuild(args.algo);
     
     break;
