@@ -5,10 +5,14 @@ const args = parseArgs(process.argv);
 console.log(process.argv[2])
 console.log(args)
 console.log(args.algo)
+console.log(Boolean(args.algo))
+console.log(!args.algo)
 
 switch (args) {
   case "backtest": {
-    if (!args.algo /*|| !args.data || !args.out*/ ) showUseExit();
+    if (!args.algo /*|| !args.data || !args.out*/ ) {
+      showUseExit();
+    }
     
     dotnetBuild(args.algo);
     
