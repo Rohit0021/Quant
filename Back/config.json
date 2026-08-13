@@ -1,0 +1,24 @@
+{
+    "algorithm-type-name": "EMACross",
+    "algorithm-language": "CSharp",
+    "algorithm-location": "/root/qc/code/bin/Debug/code.dll",
+
+    "results-destination-folder": "/root/qc/lean-results",
+
+    "data-folder": "/root/qc/data",
+
+    "live-mode": false,
+
+    "messaging-handler": "QuantConnect.Messaging.Messaging",
+    "job-queue-handler": "QuantConnect.Queues.JobQueue",
+    "api-handler": "QuantConnect.Api.Api",
+
+    "setup-handler": "QuantConnect.Lean.Engine.Setup.ConsoleSetupHandler",
+    "result-handler": "QuantConnect.Lean.Engine.Results.BacktestingResultHandler",
+    "data-feed-handler": "QuantConnect.Lean.Engine.DataFeeds.FileSystemDataFeed",
+    "real-time-handler": "QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler",
+    "transaction-handler": "QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler"
+}
+
+
+
