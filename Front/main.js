@@ -3,13 +3,14 @@ fetch("template.json")
   .then(main);
 
 function main(data) {
-  console.log(data);
+  console.log(data)
   
   makeStats(data);
   makeCurve(data);
 }
 
 function makeStats(data) {
+  
   const box = document.getElementById("stats-box");
   const add = (name, val) => {
     const div = document.createElement("div");
@@ -45,16 +46,13 @@ function makeStats(data) {
     box.appendChild(div);
   }
   
-  const freq = "N.A.";
-  const streak = "N.A.";
-  
   const stats = {
     "Accuracy": data.statistics["Win Rate"],
     "Profit Ratio": data.statistics["Profit-Loss Ratio"],
-    "Frequency": freq,
-    "Expectancy": data.statistics["Expectancy"],
-    "Drawdown": data.statistics["Drawdown"],
-    "Streak": streak,
+    "Frequency": data.totalPerformance.tradeStatistics.totalNumberOfTrades,
+    "Expectancy": data.statistics.Expectancy,
+    "Drawdown": data.statistics.Drawdown,
+    "Streak": data.totalPerformance.tradeStatistics.maxConsecutiveLosingTrades,
   };
   
   Object.keys(stats).forEach(k => {
@@ -101,4 +99,3 @@ function makeCurve(data) {
     }]
   });
 }
-

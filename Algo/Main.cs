@@ -9,7 +9,7 @@ namespace QuantConnect
 {
     public class SmaCrossDemo : QCAlgorithm
     {
-        private Symbol _spy;
+        private Symbol _eurusd;
         private SimpleMovingAverage _fast;
         private SimpleMovingAverage _slow;
 
@@ -20,10 +20,10 @@ namespace QuantConnect
 
             SetCash(100000);
 
-            _spy = AddEquity("SPY", Resolution.Daily).Symbol;
-
-            _fast = SMA(_spy, 20, Resolution.Daily);
-            _slow = SMA(_spy, 50, Resolution.Daily);
+            _eurusd = AddForex("EURUSD", Resolution.Hour).Symbol;
+            
+            _fast = SMA(_eurusd, 20, Resolution.Daily);
+            _slow = SMA(_eurusd, 50, Resolution.Daily);
 
             SetWarmUp(50, Resolution.Daily);
         }
@@ -37,17 +37,17 @@ namespace QuantConnect
                 return;
 
             // Fast SMA crosses above slow SMA -> BUY
-            if (_fast > _slow && !Portfolio[_spy].Invested)
+            if (_fast > _slow && !Portfolio[_eurusd].Invested)
             {
-                SetHoldings(_spy, 1.0);
-                Debug($"BUY {_spy} @ {Securities[_spy].Price}");
+                SetHoldings(_eurusd, 1.0);
+                Debug($"BUY {_eurusd} @ {Securities[_eurusd].Price}");
             }
 
             // Fast SMA crosses below slow SMA -> SELL
-            else if (_fast < _slow && Portfolio[_spy].Invested)
+            else if (_fast < _slow && Portfolio[_eurusd].Invested)
             {
-                Liquidate(_spy);
-                Debug($"SELL {_spy} @ {Securities[_spy].Price}");
+                Liquidate(_eurusd);
+                Debug($"SELL {_eurusd} @ {Securities[_eurusd].Price}");
             }
         }
     }
