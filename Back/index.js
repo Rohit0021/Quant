@@ -12,7 +12,7 @@ switch (argv[2]) {
     if (!args.algo || !args.data || !args.out || !args.name) showUseExit();
     
     dotnetBuild(args.algo);
-    
+    temp();
     break;
   }
   
@@ -20,7 +20,7 @@ switch (argv[2]) {
     showUseExit();
 }
 
-function temp(param) {
+function temp() {
   
   const dt = new Date();
   const outdir = args.out + `/${dt / 1}::${dt.toString()}`;
