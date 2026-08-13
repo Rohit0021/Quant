@@ -1,39 +1,18 @@
 const { spawn } = require('child_process');
 
-const args = parseArgs(process.argv);
+const argv = process.argv;
+const args = parseArgs(argv);
 
-console.log(`
-
-
-
-
-
-
-`)
-
-console.log(process.argv[2])
-console.log(process.argv)
-console.log(args)
-console.log(args.algo)
-console.log(Boolean(args.algo))
-console.log(!args.algo)
-
-switch (args) {
+switch (argv[2]) {
   case "backtest": {
-    console.log('case "backtest"')
-    if (!args.algo /*|| !args.data || !args.out*/ ) {
-      console.log('if (!args.algo)')
-      showUseExit();
-    }
-    console.log('case "backtest" after if')
-    dotnetBuild(args.algo);
+    if (!args.algo /*|| !args.data || !args.out*/ ) showUseExit();
     
+    dotnetBuild(args.algo);
     break;
   }
   
-  default: {
+  default:
     showUseExit();
-  }
 }
 
 function dotnetBuild(projectPath) {
