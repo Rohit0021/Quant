@@ -102,4 +102,3 @@ function makeCurve(data) {
   });
 }
 
-
