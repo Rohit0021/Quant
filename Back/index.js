@@ -2,7 +2,17 @@ const { spawn } = require('child_process');
 
 const args = parseArgs(process.argv);
 
+console.log(`
+
+
+
+
+
+
+`)
+
 console.log(process.argv[2])
+console.log(process.argv)
 console.log(args)
 console.log(args.algo)
 console.log(Boolean(args.algo))
