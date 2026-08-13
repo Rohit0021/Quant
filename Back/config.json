@@ -1,11 +1,11 @@
 {
     "algorithm-type-name": "EMACross",
     "algorithm-language": "CSharp",
-    "algorithm-location": "/root/qc/code/bin/Debug/code.dll",
+    "algorithm-location": "/root/Quant/Algo/bin/Debug/Algo.dll",
 
-    "results-destination-folder": "/root/qc/lean-results",
+    "results-destination-folder": "/root/Quant/Algo/backtest",
 
-    "data-folder": "/root/qc/data",
+    "data-folder": "/root/Quant/Static/data",
 
     "live-mode": false,
 
