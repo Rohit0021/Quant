@@ -4,6 +4,7 @@ const args = parseArgs(process.argv);
 
 console.log(process.argv[2])
 console.log(args)
+console.log(args.algo)
 
 switch (args) {
   case "backtest": {
