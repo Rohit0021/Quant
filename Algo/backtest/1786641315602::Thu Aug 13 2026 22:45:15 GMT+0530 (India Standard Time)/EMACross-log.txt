@@ -1,0 +1,10 @@
+2019-10-21 00:00:00 Launching analysis for EMACross with LEAN Engine v2.5.0.0
+2019-10-21 00:00:00 Algorithm starting warm up...
+2020-01-01 00:00:00 Algorithm finished warming up.
+2020-01-02 16:00:00 BUY SPY @ 317.87353470600
+2020-03-03 16:00:00 Warning: market orders submitted while the market is closed are automatically converted into MarketOnOpen orders to fill at the next market open.
+2020-03-03 16:00:00 SELL SPY @ 293.77397131200
+2020-04-30 16:00:00 BUY SPY @ 285.89494748800
+2020-10-01 16:00:00 SELL SPY @ 334.51398631200
+2020-10-20 16:00:00 BUY SPY @ 340.80646991400
+2022-12-30 16:00:00 Algorithm Id:(EMACross) completed in 1.85 seconds at 2k data points per second. Processing total of 3,056 data points.
