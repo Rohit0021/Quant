@@ -7,11 +7,11 @@ using QuantConnect.Orders;
 
 public class EmaCrossAtrStrategy : QCAlgorithm
 {
-    private Symbol _symbol;
-
     private ExponentialMovingAverage _fastEma;
     private ExponentialMovingAverage _slowEma;
     private AverageTrueRange _atr;
+
+    private Symbol _symbol;
 
     // Strategy parameters
     private int _fastPeriod = 20;
@@ -19,15 +19,11 @@ public class EmaCrossAtrStrategy : QCAlgorithm
     private int _atrPeriod = 14;
 
     // Risk parameters
-    private decimal _atrMultiplier = 2m;
-    private decimal _rewardRisk = 3m;
+    private decimal _atrMultiplier = 2m;   // Stop = 2 ATR
+    private decimal _rewardRisk = 3m;      // TP = 3R
 
-    // Exit order tickets
-    private OrderTicket _stopOrder;
-    private OrderTicket _targetOrder;
-
-    // ATR risk captured when the trade is entered
-    private decimal _riskDistance;
+    private decimal _stopPrice;
+    private decimal _targetPrice;
 
     public override void Initialize()
     {
@@ -38,13 +34,7 @@ public class EmaCrossAtrStrategy : QCAlgorithm
 
         _fastEma = EMA(_symbol, _fastPeriod, Resolution.Minute);
         _slowEma = EMA(_symbol, _slowPeriod, Resolution.Minute);
-
-        _atr = ATR(
-            _symbol,
-            _atrPeriod,
-            MovingAverageType.Wilders,
-            Resolution.Minute
-        );
+        _atr = ATR(_symbol, _atrPeriod, MovingAverageType.Wilders, Resolution.Minute);
 
         SetWarmUp(_slowPeriod + _atrPeriod);
     }
@@ -54,178 +44,112 @@ public class EmaCrossAtrStrategy : QCAlgorithm
         if (IsWarmingUp)
             return;
 
-        if (!_fastEma.IsReady ||
-            !_slowEma.IsReady ||
-            !_atr.IsReady)
+        if (!_fastEma.IsReady || !_slowEma.IsReady || !_atr.IsReady)
             return;
 
         if (!data.Bars.ContainsKey(_symbol))
             return;
 
-        // Don't enter another trade while already invested
+        var price = Securities[_symbol].Price;
+
+        // Manage existing position
         if (Portfolio[_symbol].Invested)
-            return;
-
-        // Don't enter if there are outstanding entry/exit orders
-        if (_stopOrder != null || _targetOrder != null)
-            return;
-
-        // ============================
-        // BULLISH EMA CROSS
-        // ============================
-
-        if (_fastEma.Current.Value > _slowEma.Current.Value &&
-            _fastEma.Previous.Value <= _slowEma.Previous.Value)
         {
-            EnterLong();
+            ManagePosition(price);
+            return;
         }
 
-        // ============================
-        // BEARISH EMA CROSS
-        // ============================
-
-        else if (_fastEma.Current.Value < _slowEma.Current.Value &&
-                 _fastEma.Previous.Value >= _slowEma.Previous.Value)
+        // Detect EMA crossover
+        if (_fastEma.IsReady && _slowEma.IsReady)
         {
-            EnterShort();
+            // Bullish crossover
+            if (_fastEma.Current.Value > _slowEma.Current.Value &&
+                _fastEma.Previous.Value <= _slowEma.Previous.Value)
+            {
+                EnterLong(price);
+            }
+
+            // Bearish crossover
+            else if (_fastEma.Current.Value < _slowEma.Current.Value &&
+                     _fastEma.Previous.Value >= _slowEma.Previous.Value)
+            {
+                EnterShort(price);
+            }
         }
     }
 
-    private void EnterLong()
+    private void EnterLong(decimal entryPrice)
     {
+        var atr = _atr.Current.Value;
+
+        // Risk = 2 ATR
+        var risk = atr * _atrMultiplier;
+
+        _stopPrice = entryPrice - risk;
+
+        // Reward = 3 x risk
+        _targetPrice = entryPrice + (risk * _rewardRisk);
+
         var quantity = CalculateOrderQuantity(_symbol, 1.0m);
 
-        // Capture ATR at the time of the signal
-        _riskDistance = _atr.Current.Value * _atrMultiplier;
-
         MarketOrder(_symbol, quantity);
+
+        Debug($"LONG | Entry: {entryPrice:F2} | ATR: {atr:F2} | " +
+              $"SL: {_stopPrice:F2} | TP: {_targetPrice:F2}");
     }
 
-    private void EnterShort()
+    private void EnterShort(decimal entryPrice)
     {
+        var atr = _atr.Current.Value;
+
+        // Risk = 2 ATR
+        var risk = atr * _atrMultiplier;
+
+        _stopPrice = entryPrice + risk;
+
+        // Reward = 3 x risk
+        _targetPrice = entryPrice - (risk * _rewardRisk);
+
         var quantity = CalculateOrderQuantity(_symbol, -1.0m);
 
-        // Capture ATR at the time of the signal
-        _riskDistance = _atr.Current.Value * _atrMultiplier;
-
         MarketOrder(_symbol, quantity);
+
+        Debug($"SHORT | Entry: {entryPrice:F2} | ATR: {atr:F2} | " +
+              $"SL: {_stopPrice:F2} | TP: {_targetPrice:F2}");
     }
 
-    public override void OnOrderEvent(OrderEvent orderEvent)
+    private void ManagePosition(decimal price)
     {
-        if (orderEvent.Status != OrderStatus.Filled)
-            return;
+        var holdings = Portfolio[_symbol].Quantity;
 
-        // ==========================================
-        // ENTRY FILLED
-        // ==========================================
-
-        if (orderEvent.OrderType == OrderType.Market &&
-            Portfolio[_symbol].Invested)
+        // Long position
+        if (holdings > 0)
         {
-            var entryPrice = orderEvent.FillPrice;
-            var quantity = Portfolio[_symbol].Quantity;
-
-            if (quantity > 0)
+            if (price <= _stopPrice)
             {
-                // LONG
-                var stopPrice = entryPrice - _riskDistance;
-                var targetPrice =
-                    entryPrice + (_riskDistance * _rewardRisk);
-
-                _stopOrder = StopMarketOrder(
-                    _symbol,
-                    -quantity,
-                    stopPrice
-                );
-
-                _targetOrder = LimitOrder(
-                    _symbol,
-                    -quantity,
-                    targetPrice
-                );
-
-                Debug(
-                    $"LONG ENTRY: {entryPrice:F2} | " +
-                    $"SL: {stopPrice:F2} | " +
-                    $"TP: {targetPrice:F2}"
-                );
+                Liquidate(_symbol, "Stop Loss");
+                Debug($"LONG STOP LOSS | Price: {price:F2}");
             }
-            else if (quantity < 0)
+            else if (price >= _targetPrice)
             {
-                // SHORT
-                var stopPrice = entryPrice + _riskDistance;
-                var targetPrice =
-                    entryPrice - (_riskDistance * _rewardRisk);
-
-                _stopOrder = StopMarketOrder(
-                    _symbol,
-                    -quantity,
-                    stopPrice
-                );
-
-                _targetOrder = LimitOrder(
-                    _symbol,
-                    -quantity,
-                    targetPrice
-                );
-
-                Debug(
-                    $"SHORT ENTRY: {entryPrice:F2} | " +
-                    $"SL: {stopPrice:F2} | " +
-                    $"TP: {targetPrice:F2}"
-                );
+                Liquidate(_symbol, "Take Profit");
+                Debug($"LONG TAKE PROFIT | Price: {price:F2}");
             }
-
-            return;
         }
 
-        // ==========================================
-        // STOP LOSS FILLED
-        // ==========================================
-
-        if (_stopOrder != null &&
-            orderEvent.OrderId == _stopOrder.OrderId)
+        // Short position
+        else if (holdings < 0)
         {
-            Debug(
-                $"STOP LOSS FILLED: {orderEvent.FillPrice:F2}"
-            );
-
-            // Cancel TP
-            if (_targetOrder != null)
+            if (price >= _stopPrice)
             {
-                _targetOrder.Cancel("Stop loss triggered");
+                Liquidate(_symbol, "Stop Loss");
+                Debug($"SHORT STOP LOSS | Price: {price:F2}");
             }
-
-            _stopOrder = null;
-            _targetOrder = null;
-            _riskDistance = 0;
-
-            return;
-        }
-
-        // ==========================================
-        // TAKE PROFIT FILLED
-        // ==========================================
-
-        if (_targetOrder != null &&
-            orderEvent.OrderId == _targetOrder.OrderId)
-        {
-            Debug(
-                $"TAKE PROFIT FILLED: {orderEvent.FillPrice:F2}"
-            );
-
-            // Cancel SL
-            if (_stopOrder != null)
+            else if (price <= _targetPrice)
             {
-                _stopOrder.Cancel("Take profit triggered");
+                Liquidate(_symbol, "Take Profit");
+                Debug($"SHORT TAKE PROFIT | Price: {price:F2}");
             }
-
-            _stopOrder = null;
-            _targetOrder = null;
-            _riskDistance = 0;
-
-            return;
         }
     }
 }
