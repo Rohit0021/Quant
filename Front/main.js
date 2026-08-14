@@ -1,9 +1,27 @@
-fetch("template.json")
+// Save
+// localStorage.setItem("username", "Alice");
+
+// Read
+let resfile = localStorage.getItem("--resfile");
+
+if (!resfile) resfile = "template.json";
+
+console.warn(resfile)
+
+// Remove one item
+// localStorage.removeItem("username");
+
+// Clear everything
+// localStorage.clear();
+
+fetch(resfile)
   .then(r => r.json())
   .then(main);
 
 function main(data) {
   console.log(data)
+  
+  document.getElementById("uid").textContent = decodeURIComponent(resfile);
   
   makeStats(data);
   makeCurve(data);
@@ -98,4 +116,53 @@ function makeCurve(data) {
       yAxis: 1
     }]
   });
+}
+
+fetch("/Algo/backtest/")
+  .then(x => x.text())
+  .then(html => {
+    console.log(html)
+    
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    
+    console.log(doc);
+    console.log(doc.body);
+    
+    const directories = [...(doc.querySelector(".directories")?.querySelectorAll('a') || [])].map(x => x?.pathname);
+    const files = [...(doc.querySelector(".files")?.querySelectorAll('a') || [])].map(x => x?.pathname);
+    
+    console.log(directories);
+    console.log(files);
+    
+    const dirs = directories.filter(x => x.includes("Time"));
+    makeSelector(dirs)
+  })
+  
+  function makeSelector(dirs) {
+    console.log(dirs)
+  const select = document.createElement("select");
+  
+  const defaultOpt = document.createElement("option")
+  defaultOpt.textContent = "Select here to load"
+  select.appendChild(defaultOpt);
+  
+  dirs.forEach(dir => {
+    const optionEl = document.createElement("option");
+    
+    const name = decodeURIComponent(dir).split("::")[1].split("(")[0];
+    
+    optionEl.value = dir;
+    optionEl.textContent = name;
+    
+    select.appendChild(optionEl);
+  });
+
+  select.addEventListener("change", e => {
+    const val = e.target.value + "EMACross.json";
+    localStorage.setItem("--resfile", val);
+    window.location.reload();
+  })
+  
+  document.body.appendChild(select);
+  return select;
 }
