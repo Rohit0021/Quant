@@ -1,0 +1,4 @@
+2019-11-03 19:00:00 Launching analysis for EMACross with LEAN Engine v2.5.0.0
+2019-11-03 19:00:00 Algorithm starting warm up...
+2020-01-01 00:00:00 Algorithm finished warming up.
+2021-03-31 16:00:00 Algorithm Id:(EMACross) completed in 1.08 seconds at 2k data points per second. Processing total of 2,234 data points.

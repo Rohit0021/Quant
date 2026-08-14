@@ -1,0 +1,110 @@
+2026-08-14T06:58:51.8333156Z TRACE:: Engine.Main(): LEAN ALGORITHMIC TRADING ENGINE v2.5.0.0 Mode: DEBUG (64bit) Host: localhost
+2026-08-14T06:58:51.8656173Z TRACE:: Engine.Main(): Started 12:28
+2026-08-14T06:58:51.9191004Z TRACE:: JobQueue.NextJob(): Selected /root/Quant/Algo/bin/Debug/Algo.dll
+2026-08-14T06:58:51.9891493Z TRACE:: AlgorithmManager.CreateTokenBucket(): Initializing LeakyBucket: Capacity: 120 RefillAmount: 18 TimeInterval: 1440
+2026-08-14T06:58:52.0216171Z TRACE:: Engine.Run(): Resource limits '0' CPUs. 2147483647 MB RAM.
+2026-08-14T06:58:52.0240456Z TRACE:: TextSubscriptionDataSourceReader.SetCacheSize(): Setting cache size to 71582788 items
+2026-08-14T06:58:53.6549133Z TRACE:: Loader.TryCreateILAlgorithm(): Loading debug information with algorithm
+2026-08-14T06:58:54.0523931Z TRACE:: Loader.TryCreateILAlgorithm(): Loaded SmaCrossDemo
+2026-08-14T06:58:54.0619109Z TRACE:: LocalObjectStore.Initialize(): Storage Root: /root/Quant/Back/storage. StorageFileCount 10000. StorageLimit 10240MB. StoragePermissions Read=True Write=True Delete=True
+2026-08-14T06:58:54.1141955Z TRACE:: HistoryProviderManager.Initialize(): history providers [SubscriptionDataReaderHistoryProvider]
+2026-08-14T06:58:54.1270527Z TRACE:: BaseSetupHandler.Setup(LocalPlatform): UID: 0, PID: 0, Version: 2.5.0.0, Source: WebIDE
+2026-08-14T06:58:54.5584490Z TRACE:: WeightedWorkScheduler(): will use 8 workers and MaxWorkWeight is 400
+2026-08-14T06:58:56.0231013Z TRACE:: BaseSetupHandler.SetupCurrencyConversions():
+Account Type: Margin
+
+Symbol      Quantity    Conversion = Value in USD
+USD: $      100000.00 @       1.00 = $100000
+EUR: €           0.00 @       0.00 = $0
+-------------------------------------------------
+CashBook Total Value:                $100000
+
+2026-08-14T06:58:56.0323124Z TRACE:: Total margin information: TotalMarginUsed: 0.00, MarginRemaining: 100000.00
+2026-08-14T06:58:56.0338783Z TRACE:: SetUp Backtesting: User: 0 ProjectId: 0 AlgoId: EMACross
+2026-08-14T06:58:56.0354112Z TRACE:: Dates: Start: 01/01/2020 End: 01/01/2023 Cash: ¤100,000.00 MaximumRuntime: 100.00:00:00 MaxOrders: 2147483647
+2026-08-14T06:58:56.0537463Z TRACE:: BacktestingResultHandler(): Sample Period Set: 394.92
+2026-08-14T06:58:56.0554639Z TRACE:: JOB HANDLERS:
+         DataFeed:             QuantConnect.Lean.Engine.DataFeeds.FileSystemDataFeed
+         Setup:                QuantConnect.Lean.Engine.Setup.ConsoleSetupHandler
+         RealTime:             QuantConnect.Lean.Engine.RealTime.BacktestingRealTimeHandler
+         Results:              QuantConnect.Lean.Engine.Results.BacktestingResultHandler
+         Transactions:         QuantConnect.Lean.Engine.TransactionHandlers.BacktestingTransactionHandler
+         Object Store:         QuantConnect.Lean.Engine.Storage.LocalObjectStore
+         History Provider:     QuantConnect.Lean.Engine.HistoricalData.HistoryProviderManager
+         Brokerage:            QuantConnect.Brokerages.Backtesting.BacktestingBrokerage
+         Data Provider:        QuantConnect.Lean.Engine.DataFeeds.DefaultDataProvider
+
+2026-08-14T06:58:56.1218496Z TRACE:: Event Name "Daily Sampling", scheduled to run.
+2026-08-14T06:58:56.1230146Z TRACE:: AlgorithmManager.Run(): Begin DataStream - Start: 01/01/2020 00:00:00 Stop: 01/01/2023 23:59:59 Time: 11/03/2019 19:00:00 Warmup: True
+2026-08-14T06:58:56.2226832Z TRACE:: Debug: 2019-11-03 19:00:00 Launching analysis for EMACross with LEAN Engine v2.5.0.0
+2026-08-14T06:58:56.4810266Z TRACE:: UniverseSelection.AddPendingInternalDataFeeds(): Adding internal benchmark data feed SPY,#0,SPY,Hour,TradeBar,Trade,Adjusted,OpenInterest,Internal
+2026-08-14T06:58:56.5870156Z TRACE:: AlgorithmManager.Stream(): Subscriptions count before warm up: 2
+2026-08-14T06:58:56.7338262Z TRACE:: Debug: 2019-11-03 19:00:00 Algorithm starting warm up...
+2026-08-14T06:58:56.8776580Z TRACE:: AlgorithmManager.Run(): Subscriptions count after warm up: 2
+2026-08-14T06:58:56.8852057Z TRACE:: Debug: 2020-01-01 00:00:00 Algorithm finished warming up.
+2026-08-14T06:58:57.1327133Z TRACE:: Synchronizer.GetEnumerator(): Exited thread.
+2026-08-14T06:58:57.1344762Z TRACE:: AlgorithmManager.Run(): Firing On End Of Algorithm...
+2026-08-14T06:58:57.1363946Z TRACE:: Engine.Run(): Exiting Algorithm Manager
+2026-08-14T06:58:57.1467909Z TRACE:: StopSafely(): Waiting for 'Isolator Thread' thread to stop...
+2026-08-14T06:58:57.1486429Z TRACE:: FileSystemDataFeed.Exit(): Start. Setting cancellation token...
+2026-08-14T06:58:57.1523847Z TRACE:: FileSystemDataFeed.Exit(): Exit Finished.
+2026-08-14T06:58:57.1529779Z TRACE:: BacktestingResultHandler.Exit(): starting...
+2026-08-14T06:58:57.1555749Z TRACE:: BacktestingResultHandler.Exit(): Saving logs...
+2026-08-14T06:58:57.1606349Z TRACE:: StopSafely(): Waiting for 'Result Thread' thread to stop...
+2026-08-14T06:58:57.1608475Z TRACE:: Debug: 2021-03-31 16:00:00 Algorithm Id:(EMACross) completed in 1.08 seconds at 2k data points per second. Processing total of 2,234 data points.
+2026-08-14T06:58:57.1609056Z TRACE:: Debug: 2021-03-31 16:00:00 Your log was successfully created and can be retrieved from: /root/Quant/Algo/backtest/1786690725901::Fri Aug 14 2026 12:28:45 GMT+0530 (India Standard Time)/EMACross-log.txt
+2026-08-14T06:58:57.1609355Z TRACE:: BacktestingResultHandler.Run(): Ending Thread...
+2026-08-14T06:58:58.2210081Z TRACE:: 
+STATISTICS:: Total Orders 0
+STATISTICS:: Average Win 0%
+STATISTICS:: Average Loss 0%
+STATISTICS:: Compounding Annual Return 0%
+STATISTICS:: Drawdown 0%
+STATISTICS:: Expectancy 0
+STATISTICS:: Start Equity 100000
+STATISTICS:: End Equity 100000
+STATISTICS:: Net Profit 0%
+STATISTICS:: Sharpe Ratio 0
+STATISTICS:: Sortino Ratio 0
+STATISTICS:: Probabilistic Sharpe Ratio 0%
+STATISTICS:: Loss Rate 0%
+STATISTICS:: Win Rate 0%
+STATISTICS:: Profit-Loss Ratio 0
+STATISTICS:: Alpha 0
+STATISTICS:: Beta 0
+STATISTICS:: Annual Standard Deviation 0
+STATISTICS:: Annual Variance 0
+STATISTICS:: Information Ratio -0.68
+STATISTICS:: Tracking Error 0.255
+STATISTICS:: Treynor Ratio 0
+STATISTICS:: Total Fees $0.00
+STATISTICS:: Estimated Strategy Capacity $0
+STATISTICS:: Lowest Capacity Asset 
+STATISTICS:: Portfolio Turnover 0%
+STATISTICS:: Drawdown Recovery 0
+STATISTICS:: OrderListHash d41d8cd98f00b204e9800998ecf8427e
+2026-08-14T06:58:58.2211319Z TRACE:: BacktestingResultHandler.SendAnalysisResult(): Processed final packet
+2026-08-14T06:58:58.2238060Z TRACE:: Engine.Run(): Disconnecting from brokerage...
+2026-08-14T06:58:58.2241706Z TRACE:: Engine.Run(): Disposing of setup handler...
+2026-08-14T06:58:58.2243733Z TRACE:: Engine.Main(): Analysis Completed and Results Posted.
+2026-08-14T06:58:58.2249478Z TRACE:: DataMonitor.Exit(): start...
+2026-08-14T06:58:58.2253379Z TRACE:: StopSafely(): Waiting for '' thread to stop...
+2026-08-14T06:58:58.2328494Z TRACE:: DataMonitor.GenerateReport():
+DATA USAGE:: Total data requests 5
+DATA USAGE:: Succeeded data requests 5
+DATA USAGE:: Failed data requests 0
+DATA USAGE:: Failed data requests percentage 0%
+DATA USAGE:: Total universe data requests 0
+DATA USAGE:: Succeeded universe data requests 0
+DATA USAGE:: Failed universe data requests 0
+DATA USAGE:: Failed universe data requests percentage 0%
+2026-08-14T06:58:58.2561773Z TRACE:: DataMonitor.Exit(): end
+2026-08-14T06:59:04.8485546Z TRACE:: Engine.Main(): Packet removed from queue: EMACross
+2026-08-14T06:59:04.8489343Z TRACE:: LeanEngineSystemHandlers.Dispose(): start...
+2026-08-14T06:59:04.8507580Z TRACE:: LeanEngineSystemHandlers.Dispose(): Disposed of system handlers.
+2026-08-14T06:59:04.8513552Z TRACE:: LeanEngineAlgorithmHandlers.Dispose(): start...
+2026-08-14T06:59:04.8522943Z TRACE:: LocalObjectStore.Dispose(): start...
+2026-08-14T06:59:04.8523549Z TRACE:: LocalObjectStore.Dispose(): end
+2026-08-14T06:59:04.8530432Z TRACE:: LeanEngineAlgorithmHandlers.Dispose(): Disposed of algorithm handlers.
+2026-08-14T06:59:04.8536897Z TRACE:: StopSafely(): Waiting for 'CpuPerformance' thread to stop...
+2026-08-14T06:59:04.8560774Z TRACE:: Program.Main(): Exiting Lean...

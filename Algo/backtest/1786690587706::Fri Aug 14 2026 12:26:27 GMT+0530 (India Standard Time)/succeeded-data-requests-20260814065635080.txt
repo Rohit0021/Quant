@@ -1,0 +1,5 @@
+/forex/oanda/hour/eurusd.zip
+/forex/oanda/daily/eurusd.zip
+/equity/usa/daily/spy.zip
+/equity/usa/hour/spy.zip
+/alternative/interest-rate/usa/interest-rate.csv
